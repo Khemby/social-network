@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase-server"
 import { notFound } from "next/navigation"
 import Link from "next/link"
+import Image from "next/image"
 import type { Post } from "@/lib/types"
 import { PostFeed } from "@/components/posts/PostFeed"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -56,9 +57,19 @@ export default async function ProfilePage({
       <Card className="shadow-sm">
         <CardHeader className="flex-row items-start justify-between">
           <div className="flex items-center gap-4">
-            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 text-xl font-bold text-primary">
-              {initial}
-            </div>
+            {profile.avatar_url ? (
+              <Image
+                src={profile.avatar_url}
+                alt={`${profile.display_name || profile.username}'s avatar`}
+                width={56}
+                height={56}
+                className="h-14 w-14 rounded-full object-cover"
+              />
+            ) : (
+              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 text-xl font-bold text-primary">
+                {initial}
+              </div>
+            )}
             <div>
               <CardTitle className="text-2xl tracking-tight">
                 {profile.display_name || profile.username}

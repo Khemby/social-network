@@ -8,10 +8,12 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { AvatarUpload } from "@/components/profile/AvatarUpload"
 
 export default function EditProfilePage() {
   const [displayName, setDisplayName] = useState("")
   const [bio, setBio] = useState("")
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [fetching, setFetching] = useState(true)
@@ -32,6 +34,7 @@ export default function EditProfilePage() {
       if (data) {
         setDisplayName(data.display_name || "")
         setBio(data.bio || "")
+        setAvatarUrl(data.avatar_url || null)
       }
       setFetching(false)
     }
@@ -75,54 +78,62 @@ export default function EditProfilePage() {
 
   return (
     <div className="mx-auto max-w-lg">
-      <Card>
+      <Card className="shadow-sm">
         <CardHeader>
           <CardTitle>Edit Profile</CardTitle>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-            {error && (
-              <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
-                {error}
+          <div className="flex flex-col gap-6">
+            <AvatarUpload
+              currentAvatarUrl={avatarUrl}
+              displayName={displayName || "U"}
+            />
+            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+              {error && (
+                <div className="rounded-lg bg-destructive/10 p-3 text-sm text-destructive">
+                  {error}
+                </div>
+              )}
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="displayName">Display Name</Label>
+                <Input
+                  id="displayName"
+                  value={displayName}
+                  onChange={(e) => setDisplayName(e.target.value)}
+                  placeholder="Your name"
+                  maxLength={100}
+                />
               </div>
-            )}
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="displayName">Display Name</Label>
-              <Input
-                id="displayName"
-                value={displayName}
-                onChange={(e) => setDisplayName(e.target.value)}
-                placeholder="Your name"
-                maxLength={100}
-              />
-            </div>
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="bio">Bio</Label>
-              <Textarea
-                id="bio"
-                value={bio}
-                onChange={(e) => setBio(e.target.value)}
-                placeholder="Tell us about yourself"
-                maxLength={500}
-                rows={4}
-              />
-              <span className="text-sm text-muted-foreground">
-                {bio.length}/500
-              </span>
-            </div>
-            <div className="flex gap-3">
-              <Button type="submit" disabled={loading}>
-                {loading ? "Saving..." : "Save"}
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => router.back()}
-              >
-                Cancel
-              </Button>
-            </div>
-          </form>
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="bio">Bio</Label>
+                <Textarea
+                  id="bio"
+                  value={bio}
+                  onChange={(e) => setBio(e.target.value)}
+                  placeholder="Tell us about yourself"
+                  maxLength={500}
+                  rows={4}
+                  className="resize-none"
+                />
+                <span className="text-sm text-muted-foreground">
+                  {bio.length}/500
+                </span>
+              </div>
+              <div className="flex gap-3">
+                <Button type="submit" className="cursor-pointer" disabled={loading}>
+                  {loading ? "Saving..." : "Save"}
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="cursor-pointer"
+                  onClick={() => router.back()}
+                >
+                  Cancel
+                </Button>
+              </div>
+            </form>
+          </div>
         </CardContent>
       </Card>
     </div>

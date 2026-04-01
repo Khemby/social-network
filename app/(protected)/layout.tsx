@@ -27,6 +27,12 @@ export default async function ProtectedLayout({
           </Link>
           <div className="flex items-center gap-3">
             <Link
+              href="/feed"
+              className="cursor-pointer rounded-lg px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+            >
+              Feed
+            </Link>
+            <Link
               href={`/profile/${user.id}`}
               className="cursor-pointer rounded-lg px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
             >
