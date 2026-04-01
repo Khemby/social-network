@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase-server"
 import { notFound } from "next/navigation"
 import Link from "next/link"
+import Image from "next/image"
 import type { Post } from "@/lib/types"
 import { PostFeed } from "@/components/posts/PostFeed"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -49,44 +50,65 @@ export default async function ProfilePage({
   }))
 
   const isOwnProfile = user?.id === params.id
+  const initial = (profile.display_name || profile.username).charAt(0).toUpperCase()
 
   return (
     <div className="flex flex-col gap-6">
-      <Card>
+      <Card className="shadow-sm">
         <CardHeader className="flex-row items-start justify-between">
-          <div>
-            <CardTitle className="text-2xl">
-              {profile.display_name || profile.username}
-            </CardTitle>
-            {profile.display_name && (
-              <p className="text-sm text-muted-foreground">
-                @{profile.username}
-              </p>
+          <div className="flex items-center gap-4">
+            {profile.avatar_url ? (
+              <Image
+                src={profile.avatar_url}
+                alt={`${profile.display_name || profile.username}'s avatar`}
+                width={56}
+                height={56}
+                className="h-14 w-14 rounded-full object-cover"
+              />
+            ) : (
+              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 text-xl font-bold text-primary">
+                {initial}
+              </div>
             )}
+            <div>
+              <CardTitle className="text-2xl tracking-tight">
+                {profile.display_name || profile.username}
+              </CardTitle>
+              {profile.display_name && (
+                <p className="text-sm text-muted-foreground">
+                  @{profile.username}
+                </p>
+              )}
+            </div>
           </div>
           {isOwnProfile && (
             <Link href="/profile/edit">
-              <Button variant="outline" size="sm">
+              <Button variant="outline" size="sm" className="cursor-pointer">
                 Edit Profile
               </Button>
             </Link>
           )}
         </CardHeader>
         <CardContent>
-          <p className="text-muted-foreground">
+          <p className="leading-relaxed text-muted-foreground">
             {profile.bio || "No bio yet."}
           </p>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Joined {new Date(profile.created_at).toLocaleDateString()}
+          <p className="mt-3 text-xs text-muted-foreground">
+            Joined {new Date(profile.created_at).toLocaleDateString("en-US", {
+              month: "long",
+              year: "numeric",
+            })}
           </p>
         </CardContent>
       </Card>
 
-      <h2 className="text-xl font-bold">Posts</h2>
-      <PostFeed
-        posts={postsWithLikes}
-        currentUserId={user?.id}
-      />
+      <div>
+        <h2 className="text-xl font-bold tracking-tight">Posts</h2>
+        <p className="text-sm text-muted-foreground">
+          {postsWithLikes.length} {postsWithLikes.length === 1 ? "post" : "posts"}
+        </p>
+      </div>
+      <PostFeed posts={postsWithLikes} currentUserId={user?.id} />
     </div>
   )
 }

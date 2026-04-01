@@ -33,7 +33,12 @@ export default async function FeedPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="text-2xl font-bold">Feed</h1>
+      <div>
+        <h1 className="text-2xl font-bold tracking-tight">Feed</h1>
+        <p className="text-sm text-muted-foreground">
+          See what everyone is sharing
+        </p>
+      </div>
       <PostForm />
       <PostFeed posts={postsWithLikes} currentUserId={user?.id} />
     </div>
