@@ -32,7 +32,7 @@ export default async function ProtectedLayout({
             </Link>
             <span className="text-sm text-muted-foreground">{user.email}</span>
             <form action={signOut}>
-              <Button variant="outline" size="sm">
+              <Button type="submit" variant="outline" size="sm">
                 Log out
               </Button>
             </form>
