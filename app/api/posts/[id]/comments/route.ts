@@ -1,22 +1,26 @@
 import { createClient } from "@/lib/supabase-server"
 import { NextResponse } from "next/server"
 import { z } from "zod/v4"
-import type { ApiResponse, Post } from "@/lib/types"
+import type { ApiResponse, Comment } from "@/lib/types"
 
-const createPostSchema = z.object({
+const createCommentSchema = z.object({
   content: z
     .string()
-    .min(1, "Post cannot be empty")
-    .max(500, "Post cannot exceed 500 characters"),
+    .min(1, "Comment cannot be empty")
+    .max(300, "Comment cannot exceed 300 characters"),
 })
 
-export async function GET() {
+export async function GET(
+  _request: Request,
+  { params }: { params: { id: string } }
+) {
   const supabase = createClient()
 
   const { data, error } = await supabase
-    .from("posts")
-    .select("*, profiles(*), comments(count)")
-    .order("created_at", { ascending: false })
+    .from("comments")
+    .select("*, profiles(*)")
+    .eq("post_id", params.id)
+    .order("created_at", { ascending: true })
     .limit(50)
 
   if (error) {
@@ -31,7 +35,10 @@ export async function GET() {
   )
 }
 
-export async function POST(request: Request) {
+export async function POST(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
   const supabase = createClient()
 
   const {
@@ -46,7 +53,7 @@ export async function POST(request: Request) {
   }
 
   const body = await request.json()
-  const parsed = createPostSchema.safeParse(body)
+  const parsed = createCommentSchema.safeParse(body)
 
   if (!parsed.success) {
     return NextResponse.json(
@@ -59,8 +66,8 @@ export async function POST(request: Request) {
   }
 
   const { data, error } = await supabase
-    .from("posts")
-    .insert({ content: parsed.data.content, user_id: user.id })
+    .from("comments")
+    .insert({ content: parsed.data.content, user_id: user.id, post_id: params.id })
     .select("*, profiles(*)")
     .single()
 
@@ -72,7 +79,7 @@ export async function POST(request: Request) {
   }
 
   return NextResponse.json(
-    { data, error: null } satisfies ApiResponse<Post>,
+    { data, error: null } satisfies ApiResponse<Comment>,
     { status: 201 }
   )
 }

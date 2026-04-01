@@ -10,7 +10,7 @@ export default async function FeedPage() {
 
   const { data: posts } = await supabase
     .from("posts")
-    .select("*, profiles(*), likes(count)")
+    .select("*, profiles(*), likes(count), comments(count)")
     .order("created_at", { ascending: false })
     .limit(50)
 
