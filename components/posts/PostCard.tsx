@@ -27,6 +27,9 @@ type PostCardProps = {
 
 export function PostCard({ post, currentUserId }: PostCardProps) {
   const [deleting, setDeleting] = useState(false)
+  const [liked, setLiked] = useState(post.user_has_liked ?? false)
+  const [likeCount, setLikeCount] = useState(post.likes?.[0]?.count ?? 0)
+  const [liking, setLiking] = useState(false)
   const router = useRouter()
   const isOwner = currentUserId === post.user_id
 
@@ -37,6 +40,25 @@ export function PostCard({ post, currentUserId }: PostCardProps) {
       router.refresh()
     }
     setDeleting(false)
+  }
+
+  async function handleLike() {
+    if (!currentUserId || liking) return
+    setLiking(true)
+
+    const prevLiked = liked
+    const prevCount = likeCount
+    setLiked(!liked)
+    setLikeCount(liked ? likeCount - 1 : likeCount + 1)
+
+    const res = await fetch(`/api/posts/${post.id}/like`, { method: "POST" })
+
+    if (!res.ok) {
+      setLiked(prevLiked)
+      setLikeCount(prevCount)
+    }
+
+    setLiking(false)
   }
 
   return (
@@ -67,6 +89,17 @@ export function PostCard({ post, currentUserId }: PostCardProps) {
       </CardHeader>
       <CardContent>
         <p className="whitespace-pre-wrap">{post.content}</p>
+        <div className="mt-3 flex items-center gap-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleLike}
+            disabled={!currentUserId || liking}
+            className={liked ? "text-red-500 hover:text-red-600" : "text-muted-foreground"}
+          >
+            {liked ? "♥" : "♡"} {likeCount > 0 && likeCount}
+          </Button>
+        </div>
       </CardContent>
     </Card>
   )

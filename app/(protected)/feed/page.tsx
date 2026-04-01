@@ -10,18 +10,32 @@ export default async function FeedPage() {
 
   const { data: posts } = await supabase
     .from("posts")
-    .select("*, profiles(*)")
+    .select("*, profiles(*), likes(count)")
     .order("created_at", { ascending: false })
     .limit(50)
+
+  let userLikedPostIds: Set<string> = new Set()
+  if (user) {
+    const { data: userLikes } = await supabase
+      .from("likes")
+      .select("post_id")
+      .eq("user_id", user.id)
+
+    if (userLikes) {
+      userLikedPostIds = new Set(userLikes.map((l) => l.post_id))
+    }
+  }
+
+  const postsWithLikes = ((posts as Post[]) || []).map((post) => ({
+    ...post,
+    user_has_liked: userLikedPostIds.has(post.id),
+  }))
 
   return (
     <div className="flex flex-col gap-6">
       <h1 className="text-2xl font-bold">Feed</h1>
       <PostForm />
-      <PostFeed
-        posts={(posts as Post[]) || []}
-        currentUserId={user?.id}
-      />
+      <PostFeed posts={postsWithLikes} currentUserId={user?.id} />
     </div>
   )
 }

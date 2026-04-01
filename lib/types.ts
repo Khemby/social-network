@@ -14,6 +14,8 @@ export type Post = {
   content: string
   created_at: string
   profiles: Profile
+  likes: { count: number }[]
+  user_has_liked?: boolean
 }
 
 export type Like = {
