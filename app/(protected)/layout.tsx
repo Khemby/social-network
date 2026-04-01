@@ -1,7 +1,6 @@
 import { createClient } from "@/lib/supabase-server"
 import { redirect } from "next/navigation"
-import { signOut } from "@/app/(auth)/auth-actions"
-import { Button } from "@/components/ui/button"
+import { LogoutButton } from "@/components/layout/LogoutButton"
 import Link from "next/link"
 
 export default async function ProtectedLayout({
@@ -31,11 +30,7 @@ export default async function ProtectedLayout({
               Profile
             </Link>
             <span className="text-sm text-muted-foreground">{user.email}</span>
-            <form action={signOut}>
-              <Button variant="outline" size="sm">
-                Log out
-              </Button>
-            </form>
+            <LogoutButton />
           </div>
         </nav>
       </header>
