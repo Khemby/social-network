@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/card"
 
 export default function SignupPage() {
+  const [username, setUsername] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
@@ -28,6 +29,18 @@ export default function SignupPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setError(null)
+
+    const trimmedUsername = username.trim().toLowerCase()
+
+    if (trimmedUsername.length < 3) {
+      setError("Username must be at least 3 characters")
+      return
+    }
+
+    if (!/^[a-z0-9_]+$/.test(trimmedUsername)) {
+      setError("Username can only contain letters, numbers, and underscores")
+      return
+    }
 
     if (password !== confirmPassword) {
       setError("Passwords do not match")
@@ -41,13 +54,31 @@ export default function SignupPage() {
 
     setLoading(true)
 
-    const { error } = await supabase.auth.signUp({
+    const { data: existing } = await supabase
+      .from("profiles")
+      .select("id")
+      .eq("username", trimmedUsername)
+      .single()
+
+    if (existing) {
+      setError("Username is already taken")
+      setLoading(false)
+      return
+    }
+
+    const { error: signUpError } = await supabase.auth.signUp({
       email,
       password,
+      options: {
+        data: {
+          username: trimmedUsername,
+          display_name: trimmedUsername,
+        },
+      },
     })
 
-    if (error) {
-      setError(error.message)
+    if (signUpError) {
+      setError(signUpError.message)
       setLoading(false)
       return
     }
@@ -72,6 +103,27 @@ export default function SignupPage() {
             </div>
           )}
           <div className="flex flex-col gap-2">
+            <Label htmlFor="username">Username</Label>
+            <div className="flex items-center gap-1">
+              <span className="text-sm text-muted-foreground">@</span>
+              <Input
+                id="username"
+                type="text"
+                placeholder="yourname"
+                value={username}
+                onChange={(e) => setUsername(e.target.value.toLowerCase())}
+                required
+                minLength={3}
+                maxLength={30}
+                pattern="[a-z0-9_]+"
+                autoFocus
+              />
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Letters, numbers, and underscores only
+            </p>
+          </div>
+          <div className="flex flex-col gap-2">
             <Label htmlFor="email">Email</Label>
             <Input
               id="email"
@@ -80,7 +132,6 @@ export default function SignupPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              autoFocus
             />
           </div>
           <div className="flex flex-col gap-2">
