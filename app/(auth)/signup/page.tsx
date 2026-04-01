@@ -57,17 +57,17 @@ export default function SignupPage() {
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="text-2xl">Sign Up</CardTitle>
+    <Card className="shadow-lg">
+      <CardHeader className="text-center">
+        <CardTitle className="text-2xl">Create an account</CardTitle>
         <CardDescription>
-          Create an account to start posting updates
+          Start sharing updates with the community
         </CardDescription>
       </CardHeader>
       <form onSubmit={handleSubmit}>
         <CardContent className="flex flex-col gap-4">
           {error && (
-            <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
+            <div className="rounded-lg bg-destructive/10 p-3 text-sm text-destructive">
               {error}
             </div>
           )}
@@ -80,6 +80,7 @@ export default function SignupPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              autoFocus
             />
           </div>
           <div className="flex flex-col gap-2">
@@ -107,13 +108,13 @@ export default function SignupPage() {
             />
           </div>
         </CardContent>
-        <CardFooter className="flex flex-col gap-3">
-          <Button type="submit" className="w-full" disabled={loading}>
+        <CardFooter className="flex flex-col gap-4">
+          <Button type="submit" className="w-full cursor-pointer" disabled={loading}>
             {loading ? "Creating account..." : "Sign Up"}
           </Button>
           <p className="text-center text-sm text-muted-foreground">
             Already have an account?{" "}
-            <Link href="/login" className="text-primary underline">
+            <Link href="/login" className="font-medium text-primary hover:underline">
               Log in
             </Link>
           </p>

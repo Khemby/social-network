@@ -16,25 +16,27 @@ export default async function ProtectedLayout({
   }
 
   return (
-    <div className="min-h-screen">
-      <header className="border-b">
-        <nav className="mx-auto flex max-w-4xl items-center justify-between px-4 py-3">
-          <Link href="/feed" className="text-lg font-bold">
+    <div className="min-h-screen bg-background">
+      <header className="sticky top-0 z-40 border-b bg-card/80 backdrop-blur-sm">
+        <nav className="mx-auto flex max-w-2xl items-center justify-between px-4 py-3">
+          <Link
+            href="/feed"
+            className="text-lg font-bold tracking-tight transition-colors hover:text-primary"
+          >
             Social Network
           </Link>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             <Link
               href={`/profile/${user.id}`}
-              className="text-sm text-muted-foreground hover:text-foreground"
+              className="cursor-pointer rounded-lg px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
             >
               Profile
             </Link>
-            <span className="text-sm text-muted-foreground">{user.email}</span>
             <LogoutButton />
           </div>
         </nav>
       </header>
-      <main className="mx-auto max-w-4xl px-4 py-6">{children}</main>
+      <main className="mx-auto max-w-2xl px-4 py-8">{children}</main>
     </div>
   )
 }

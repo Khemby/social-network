@@ -45,17 +45,17 @@ export default function LoginPage() {
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="text-2xl">Log In</CardTitle>
+    <Card className="shadow-lg">
+      <CardHeader className="text-center">
+        <CardTitle className="text-2xl">Welcome back</CardTitle>
         <CardDescription>
-          Enter your email and password to access your account
+          Enter your credentials to access your account
         </CardDescription>
       </CardHeader>
       <form onSubmit={handleSubmit}>
         <CardContent className="flex flex-col gap-4">
           {error && (
-            <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
+            <div className="rounded-lg bg-destructive/10 p-3 text-sm text-destructive">
               {error}
             </div>
           )}
@@ -68,6 +68,7 @@ export default function LoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              autoFocus
             />
           </div>
           <div className="flex flex-col gap-2">
@@ -82,13 +83,13 @@ export default function LoginPage() {
             />
           </div>
         </CardContent>
-        <CardFooter className="flex flex-col gap-3">
-          <Button type="submit" className="w-full" disabled={loading}>
+        <CardFooter className="flex flex-col gap-4">
+          <Button type="submit" className="w-full cursor-pointer" disabled={loading}>
             {loading ? "Logging in..." : "Log In"}
           </Button>
           <p className="text-center text-sm text-muted-foreground">
             Don&apos;t have an account?{" "}
-            <Link href="/signup" className="text-primary underline">
+            <Link href="/signup" className="font-medium text-primary hover:underline">
               Sign up
             </Link>
           </p>

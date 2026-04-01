@@ -62,18 +62,23 @@ export function PostCard({ post, currentUserId }: PostCardProps) {
   }
 
   return (
-    <Card>
+    <Card className="shadow-sm transition-shadow duration-200 hover:shadow-md">
       <CardHeader className="flex-row items-center justify-between pb-2">
         <div className="flex items-center gap-2">
-          <Link
-            href={`/profile/${post.user_id}`}
-            className="font-medium hover:underline"
-          >
-            {post.profiles.display_name || post.profiles.username}
-          </Link>
-          <span className="text-sm text-muted-foreground">
-            {timeAgo(post.created_at)}
-          </span>
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">
+            {(post.profiles.display_name || post.profiles.username).charAt(0).toUpperCase()}
+          </div>
+          <div className="flex flex-col">
+            <Link
+              href={`/profile/${post.user_id}`}
+              className="cursor-pointer text-sm font-semibold transition-colors hover:text-primary"
+            >
+              {post.profiles.display_name || post.profiles.username}
+            </Link>
+            <span className="text-xs text-muted-foreground">
+              {timeAgo(post.created_at)}
+            </span>
+          </div>
         </div>
         {isOwner && (
           <Button
@@ -81,24 +86,27 @@ export function PostCard({ post, currentUserId }: PostCardProps) {
             size="sm"
             onClick={handleDelete}
             disabled={deleting}
-            className="text-destructive hover:text-destructive"
+            className="cursor-pointer text-xs text-muted-foreground transition-colors hover:text-destructive"
           >
-            {deleting ? "Deleting..." : "Delete"}
+            {deleting ? "..." : "Delete"}
           </Button>
         )}
       </CardHeader>
       <CardContent>
-        <p className="whitespace-pre-wrap">{post.content}</p>
-        <div className="mt-3 flex items-center gap-2">
-          <Button
-            variant="ghost"
-            size="sm"
+        <p className="whitespace-pre-wrap leading-relaxed">{post.content}</p>
+        <div className="mt-3 flex items-center gap-1">
+          <button
             onClick={handleLike}
             disabled={!currentUserId || liking}
-            className={liked ? "text-red-500 hover:text-red-600" : "text-muted-foreground"}
+            className={`cursor-pointer rounded-full px-3 py-1 text-sm transition-all duration-200 ${
+              liked
+                ? "bg-red-50 text-red-500 hover:bg-red-100"
+                : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+            } disabled:cursor-default disabled:opacity-50`}
           >
-            {liked ? "♥" : "♡"} {likeCount > 0 && likeCount}
-          </Button>
+            {liked ? "♥" : "♡"}
+            {likeCount > 0 && <span className="ml-1">{likeCount}</span>}
+          </button>
         </div>
       </CardContent>
     </Card>

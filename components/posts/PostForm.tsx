@@ -39,11 +39,11 @@ export function PostForm() {
   }
 
   return (
-    <Card>
+    <Card className="shadow-sm">
       <CardContent className="pt-4">
         <form onSubmit={handleSubmit} className="flex flex-col gap-3">
           {error && (
-            <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
+            <div className="rounded-lg bg-destructive/10 p-3 text-sm text-destructive">
               {error}
             </div>
           )}
@@ -54,14 +54,22 @@ export function PostForm() {
             maxLength={MAX_CHARS}
             rows={3}
             required
+            className="resize-none text-base transition-colors focus:border-primary"
           />
           <div className="flex items-center justify-between">
-            <span className="text-sm text-muted-foreground">
+            <span
+              className={`text-sm ${
+                content.length > 450
+                  ? "font-medium text-destructive"
+                  : "text-muted-foreground"
+              }`}
+            >
               {content.length}/{MAX_CHARS}
             </span>
             <Button
               type="submit"
               disabled={loading || content.trim().length === 0}
+              className="cursor-pointer px-6"
             >
               {loading ? "Posting..." : "Post"}
             </Button>
