@@ -28,6 +28,8 @@ const mockPosts: Post[] = [
     content: "Hello world!",
     created_at: new Date().toISOString(),
     profiles: mockProfile,
+    likes: [{ count: 3 }],
+    user_has_liked: true,
   },
   {
     id: "post-2",
@@ -40,6 +42,8 @@ const mockPosts: Post[] = [
       username: "other@example.com",
       display_name: "Other User",
     },
+    likes: [{ count: 0 }],
+    user_has_liked: false,
   },
 ]
 

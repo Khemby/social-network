@@ -27,9 +27,26 @@ export default async function ProfilePage({
 
   const { data: posts } = await supabase
     .from("posts")
-    .select("*, profiles(*)")
+    .select("*, profiles(*), likes(count)")
     .eq("user_id", params.id)
     .order("created_at", { ascending: false })
+
+  let userLikedPostIds: Set<string> = new Set()
+  if (user) {
+    const { data: userLikes } = await supabase
+      .from("likes")
+      .select("post_id")
+      .eq("user_id", user.id)
+
+    if (userLikes) {
+      userLikedPostIds = new Set(userLikes.map((l) => l.post_id))
+    }
+  }
+
+  const postsWithLikes = ((posts as Post[]) || []).map((post) => ({
+    ...post,
+    user_has_liked: userLikedPostIds.has(post.id),
+  }))
 
   const isOwnProfile = user?.id === params.id
 
@@ -67,7 +84,7 @@ export default async function ProfilePage({
 
       <h2 className="text-xl font-bold">Posts</h2>
       <PostFeed
-        posts={(posts as Post[]) || []}
+        posts={postsWithLikes}
         currentUserId={user?.id}
       />
     </div>
