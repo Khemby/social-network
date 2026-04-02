@@ -7,6 +7,7 @@ import Image from "next/image"
 import type { Post } from "@/lib/types"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { CommentSection } from "./CommentSection"
 
 function timeAgo(dateString: string): string {
   const seconds = Math.floor(
@@ -31,6 +32,7 @@ export function PostCard({ post, currentUserId }: PostCardProps) {
   const [liked, setLiked] = useState(post.user_has_liked ?? false)
   const [likeCount, setLikeCount] = useState(post.likes?.[0]?.count ?? 0)
   const [liking, setLiking] = useState(false)
+  const [showComments, setShowComments] = useState(false)
   const router = useRouter()
   const isOwner = currentUserId === post.user_id
   const initial = (post.profiles.display_name || post.profiles.username).charAt(0).toUpperCase()
@@ -121,7 +123,16 @@ export function PostCard({ post, currentUserId }: PostCardProps) {
             {liked ? "♥" : "♡"}
             {likeCount > 0 && <span className="ml-1">{likeCount}</span>}
           </button>
+          <button
+            onClick={() => setShowComments(!showComments)}
+            className="cursor-pointer rounded-full px-3 py-1 text-sm text-muted-foreground transition-all duration-200 hover:bg-secondary hover:text-foreground"
+          >
+            💬{post.comments?.[0]?.count ? ` ${post.comments[0].count}` : ""}
+          </button>
         </div>
+        {showComments && (
+          <CommentSection postId={post.id} currentUserId={currentUserId} />
+        )}
       </CardContent>
     </Card>
   )

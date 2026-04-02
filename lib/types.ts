@@ -16,6 +16,16 @@ export type Post = {
   profiles: Profile
   likes: { count: number }[]
   user_has_liked?: boolean
+  comments?: { count: number }[]
+}
+
+export type Comment = {
+  id: string
+  post_id: string
+  user_id: string
+  content: string
+  created_at: string
+  profiles: Profile
 }
 
 export type Like = {
